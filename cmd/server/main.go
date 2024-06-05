@@ -6,6 +6,7 @@ import (
 	"github.com/AdiPP/go-marketplace/pkg/domain/event"
 	domainQueue "github.com/AdiPP/go-marketplace/pkg/domain/queue"
 	infraQueue "github.com/AdiPP/go-marketplace/pkg/infrastructure/queue"
+	"github.com/AdiPP/go-marketplace/pkg/infrastructure/repository"
 	"github.com/AdiPP/go-marketplace/pkg/interface/controller"
 	"github.com/AdiPP/go-marketplace/pkg/interface/listener"
 	"github.com/AdiPP/go-marketplace/pkg/usecase"
@@ -18,11 +19,14 @@ func main() {
 	// Context
 	ctx := context.Background()
 
+	// Repository Adapter
+	productRepositoryAdapter := repository.NewDummyProductRepositoryAdapter()
+
 	// Queue Adapter
 	memoryQueueAdapter := infraQueue.NewMemoryQueueAdapter()
 
 	// Use Cases
-	createOrderUseCase := usecase.NewCreateOrderUseCase(memoryQueueAdapter)
+	createOrderUseCase := usecase.NewCreateOrderUseCase(memoryQueueAdapter, productRepositoryAdapter)
 	processPaymentUseCase := usecase.NewProcessOrderPaymentUseCase(memoryQueueAdapter)
 
 	// Handlers

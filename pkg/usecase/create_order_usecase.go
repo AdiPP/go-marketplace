@@ -2,28 +2,32 @@ package usecase
 
 import (
 	"context"
-	"fmt"
 	"github.com/AdiPP/go-marketplace/pkg/domain/entity"
 	"github.com/AdiPP/go-marketplace/pkg/domain/event"
 	"github.com/AdiPP/go-marketplace/pkg/domain/queue"
+	"github.com/AdiPP/go-marketplace/pkg/usecase/repository"
 )
 
 type CreateOrderUseCase struct {
-	publisher queue.Publisher
+	publisher         queue.Publisher
+	productRepository repository.ProductRepository
 }
 
-func NewCreateOrderUseCase(publisher queue.Publisher) *CreateOrderUseCase {
-	return &CreateOrderUseCase{publisher: publisher}
+func NewCreateOrderUseCase(publisher queue.Publisher, productRepository repository.ProductRepository) *CreateOrderUseCase {
+	return &CreateOrderUseCase{publisher: publisher, productRepository: productRepository}
 }
 
 func (u *CreateOrderUseCase) Execute(ctx context.Context, dto CreateOrderDto) (result *entity.OrderEntity, err error) {
 	order := entity.NewOrderEntity()
 
 	for _, item := range dto.Items {
-		fakeProductName := fmt.Sprintf("Product %s", item.ProductId)
-		fakeProductPrice := 10.50
+		product, err := u.productRepository.FindById(item.ProductId)
 
-		orderItem := entity.NewOrderItemEntity(fakeProductName, fakeProductPrice, item.Qtd)
+		if err != nil {
+			return nil, err
+		}
+
+		orderItem := entity.NewOrderItemEntity(product.ProductName, product.ProductPrice, item.Qtd)
 
 		order.AddItem(orderItem)
 	}
