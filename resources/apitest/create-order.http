@@ -1,0 +1,11 @@
+POST http://localhost:8080/create-order
+Content-Type: application/json
+
+{
+  "items": [
+    {
+      "product_id": "1",
+      "qtd": 10
+    }
+  ]
+}
