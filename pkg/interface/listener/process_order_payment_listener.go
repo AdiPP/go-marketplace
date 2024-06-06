@@ -15,9 +15,9 @@ func NewProcessOrderPaymentListener(processOrderPaymentUseCase *usecase.ProcessO
 	return &ProcessOrderPaymentListener{processOrderPaymentUseCase: processOrderPaymentUseCase}
 }
 
-func (l *ProcessOrderPaymentListener) Handle(ctx context.Context, event any) (err error) {
+func (l *ProcessOrderPaymentListener) Handle(ctx context.Context, event domainEvent.Event) (err error) {
 	fmt.Println("--- ProcessOrderPaymentListener ---")
-	orderCreatedEvent := event.(domainEvent.OrderCreatedEvent)
+	orderCreatedEvent := event.(*domainEvent.OrderCreatedEvent)
 
 	var useCaseOrderItems []usecase.OrderItem
 

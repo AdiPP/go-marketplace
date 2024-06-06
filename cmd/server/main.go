@@ -12,7 +12,6 @@ import (
 	"github.com/AdiPP/go-marketplace/pkg/usecase"
 	"log"
 	"net/http"
-	"reflect"
 )
 
 func main() {
@@ -20,14 +19,14 @@ func main() {
 	ctx := context.Background()
 
 	// Repository Adapter
-	dummyRepository := repository.NewDummyRepositoryAdapter()
+	repo := repository.NewDummyRepositoryAdapter()
 
 	// Queue Adapter
-	memoryQueueAdapter := infraQueue.NewMemoryQueueAdapter()
+	q := infraQueue.NewRabbitMQAdapter("amqp://guest:guest@localhost:5672/")
 
 	// Use Cases
-	createOrderUseCase := usecase.NewCreateOrderUseCase(memoryQueueAdapter, dummyRepository, dummyRepository)
-	processPaymentUseCase := usecase.NewProcessOrderPaymentUseCase(memoryQueueAdapter)
+	createOrderUseCase := usecase.NewCreateOrderUseCase(q, repo, repo)
+	processPaymentUseCase := usecase.NewProcessOrderPaymentUseCase(q)
 
 	// Handlers
 	createOrderHandler := controller.NewCreateOrderHandler(createOrderUseCase)
@@ -38,8 +37,8 @@ func main() {
 
 	http.HandleFunc("POST /create-order", createOrderHandler.Handle)
 
-	eventHandlers := map[reflect.Type][]domainQueue.Listener{
-		reflect.TypeOf(event.OrderCreatedEvent{}): {
+	eventHandlers := map[string][]domainQueue.Listener{
+		event.OrderCreatedEvent{}.GetType(): {
 			processOrderPaymentListener,
 			stockMovementListener,
 		},
@@ -47,25 +46,27 @@ func main() {
 
 	for eventType, handlers := range eventHandlers {
 		for _, handler := range handlers {
-			memoryQueueAdapter.ListenerRegister(eventType, handler)
+			q.ListenerRegister(eventType, handler)
 		}
 	}
 
-	err := memoryQueueAdapter.Connect(ctx)
+	err := q.Connect(ctx)
 
 	if err != nil {
 		log.Fatalf("Error connect queue %s", err)
 	}
 
-	defer memoryQueueAdapter.Disconnect(ctx)
+	defer q.Disconnect(ctx)
+
+	orderCreatedEventName := event.OrderCreatedEvent{}.GetType()
 
 	go func(ctx context.Context, queueName string) {
-		err = memoryQueueAdapter.StartConsuming(ctx, queueName)
+		err = q.StartConsuming(ctx, queueName)
 
 		if err != nil {
 			log.Fatalf("Error starting consumer %s: %s", queueName, err)
 		}
-	}(ctx, "default")
+	}(ctx, orderCreatedEventName)
 
 	fmt.Println("Listening on port 8080")
 	http.ListenAndServe(":8080", nil)

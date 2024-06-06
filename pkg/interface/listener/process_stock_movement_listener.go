@@ -2,8 +2,9 @@ package listener
 
 import (
 	"context"
-	"errors"
 	"fmt"
+
+	"github.com/AdiPP/go-marketplace/pkg/domain/event"
 )
 
 type ProcessStockMovementListener struct {
@@ -13,14 +14,8 @@ func NewProcessStockMovementListener() *ProcessStockMovementListener {
 	return &ProcessStockMovementListener{}
 }
 
-func (p ProcessStockMovementListener) Handle(ctx context.Context, event any) (err error) {
+func (p ProcessStockMovementListener) Handle(ctx context.Context, event event.Event) (err error) {
 	fmt.Println("--- StockMovementListener ---")
-
-	err = errors.New("process stock movement listener failed")
-
-	if err != nil {
-		return
-	}
 
 	return nil
 }

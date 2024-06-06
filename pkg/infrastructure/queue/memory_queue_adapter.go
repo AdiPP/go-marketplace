@@ -3,6 +3,7 @@ package queue
 import (
 	"context"
 	"encoding/json"
+	"github.com/AdiPP/go-marketplace/pkg/domain/event"
 	"github.com/AdiPP/go-marketplace/pkg/domain/queue"
 	"log"
 	"reflect"
@@ -19,8 +20,8 @@ func NewMemoryQueueAdapter() *MemoryQueueAdapter {
 	}
 }
 
-func (m *MemoryQueueAdapter) ListenerRegister(eventType reflect.Type, listener queue.Listener) {
-	m.listeners[eventType.Name()] = append(m.listeners[eventType.Name()], listener)
+func (m *MemoryQueueAdapter) ListenerRegister(eventType string, listener queue.Listener) {
+	m.listeners[eventType] = append(m.listeners[eventType], listener)
 }
 
 func (m *MemoryQueueAdapter) Connect(ctx context.Context) error {
@@ -33,7 +34,7 @@ func (m *MemoryQueueAdapter) Disconnect(ctx context.Context) error {
 	return nil
 }
 
-func (m *MemoryQueueAdapter) Publish(ctx context.Context, event any) error {
+func (m *MemoryQueueAdapter) Publish(ctx context.Context, event event.Event) error {
 	eventType := reflect.TypeOf(event)
 	payloadJson, _ := json.Marshal(event)
 
@@ -50,7 +51,7 @@ func (m *MemoryQueueAdapter) Publish(ctx context.Context, event any) error {
 			_ = listener.Handle(ctx, event)
 
 			// TODO: Handling failed event
-			
+
 		}(listener)
 	}
 
