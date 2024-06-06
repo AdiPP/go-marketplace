@@ -20,13 +20,13 @@ func main() {
 	ctx := context.Background()
 
 	// Repository Adapter
-	productRepositoryAdapter := repository.NewDummyProductRepositoryAdapter()
+	dummyRepository := repository.NewDummyRepositoryAdapter()
 
 	// Queue Adapter
 	memoryQueueAdapter := infraQueue.NewMemoryQueueAdapter()
 
 	// Use Cases
-	createOrderUseCase := usecase.NewCreateOrderUseCase(memoryQueueAdapter, productRepositoryAdapter)
+	createOrderUseCase := usecase.NewCreateOrderUseCase(memoryQueueAdapter, dummyRepository, dummyRepository)
 	processPaymentUseCase := usecase.NewProcessOrderPaymentUseCase(memoryQueueAdapter)
 
 	// Handlers
