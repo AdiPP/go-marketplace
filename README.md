@@ -1,6 +1,6 @@
 # Go Marketplace
 
-Go Marketplace is a sample project demonstrating a marketplace application built with Go using Clean Architecture principles. It features event-driven processing using a memory-based queue adapter.
+Go Marketplace is a sample project demonstrating a marketplace application built with Go using Clean Architecture principles. It features event-driven processing using a memory-based and rabbitMQ queue adapter.
 
 ## Table of Contents
 
@@ -16,7 +16,7 @@ The project is organized into several packages, each responsible for different a
 
 - `pkg/domain/event`: Defines the domain events used in the application.
 - `pkg/domain/queue`: Defines the interfaces for the queue system.
-- `pkg/infrastructure/queue`: Provides a memory-based queue adapter implementation.
+- `pkg/infrastructure/queue`: Provides a queue adapter implementation.
 - `pkg/interface/controller`: Contains the HTTP controllers for handling API requests.
 - `pkg/interface/listener`: Contains the event listeners for handling events.
 - `pkg/usecase`: Contains the use cases that implement the business logic.
@@ -42,12 +42,18 @@ cd go-marketplace
 go mod tidy
 ```
 
+3. Run RabbitMQ:
+
+```sh
+docker compose up -d
+```
+
 ## Usage
 
 To run the application, use the following command:
 
 ```sh
-go run main.go
+go run cmd/server/main.go
 ```
 
 The application will start an HTTP server listening on port 8080. You can create orders by sending a POST request to the `/create-order` endpoint.
