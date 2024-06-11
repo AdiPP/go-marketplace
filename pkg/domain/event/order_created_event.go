@@ -7,6 +7,10 @@ type OrderCreatedEvent struct {
 	Status     string
 }
 
+func (o OrderCreatedEvent) GetType() string {
+	return "OrderCreatedEvent"
+}
+
 type OrderItem struct {
 	ProductName string
 	Quantity    int

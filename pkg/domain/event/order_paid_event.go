@@ -7,3 +7,7 @@ type OrderPaidEvent struct {
 	PaidValue   float64
 	PaymentDate time.Time
 }
+
+func (o OrderPaidEvent) GetType() string {
+	return "OrderPaidEvent"
+}

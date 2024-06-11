@@ -11,10 +11,11 @@ import (
 type CreateOrderUseCase struct {
 	publisher         queue.Publisher
 	productRepository repository.ProductRepository
+	orderRepository   repository.OrderRepository
 }
 
-func NewCreateOrderUseCase(publisher queue.Publisher, productRepository repository.ProductRepository) *CreateOrderUseCase {
-	return &CreateOrderUseCase{publisher: publisher, productRepository: productRepository}
+func NewCreateOrderUseCase(publisher queue.Publisher, productRepository repository.ProductRepository, orderRepository repository.OrderRepository) *CreateOrderUseCase {
+	return &CreateOrderUseCase{publisher: publisher, productRepository: productRepository, orderRepository: orderRepository}
 }
 
 func (u *CreateOrderUseCase) Execute(ctx context.Context, dto CreateOrderDto) (result *entity.OrderEntity, err error) {
@@ -30,6 +31,12 @@ func (u *CreateOrderUseCase) Execute(ctx context.Context, dto CreateOrderDto) (r
 		orderItem := entity.NewOrderItemEntity(product.ProductName, product.ProductPrice, item.Qtd)
 
 		order.AddItem(orderItem)
+	}
+
+	order, err = u.orderRepository.Save(order)
+
+	if err != nil {
+		return
 	}
 
 	var eventItems []event.OrderItem
