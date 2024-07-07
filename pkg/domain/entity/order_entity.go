@@ -2,7 +2,6 @@ package entity
 
 import (
 	"errors"
-	"github.com/google/uuid"
 )
 
 const (
@@ -11,7 +10,7 @@ const (
 )
 
 type OrderEntity struct {
-	id         string
+	id         int64
 	status     string
 	items      []*OrderItemEntity
 	totalPrice float64
@@ -20,12 +19,12 @@ type OrderEntity struct {
 
 func NewOrderEntity() *OrderEntity {
 	return &OrderEntity{
-		id:     uuid.New().String(),
+
 		status: OrderStatusPending,
 	}
 }
 
-func RestoreOrderEntity(id, status string) *OrderEntity {
+func RestoreOrderEntity(id int64, status string) *OrderEntity {
 	return &OrderEntity{
 		id:     id,
 		status: status,
@@ -37,8 +36,16 @@ func (o *OrderEntity) AddItem(item *OrderItemEntity) {
 	o.totalPrice += item.TotalPrice()
 }
 
-func (o *OrderEntity) Id() string {
+func (o *OrderEntity) SetId(id int64) {
+	o.id = id
+}
+
+func (o *OrderEntity) Id() int64 {
 	return o.id
+}
+
+func (o *OrderEntity) SetStatus(status string) {
+	o.status = status
 }
 
 func (o *OrderEntity) Status() string {
@@ -49,8 +56,16 @@ func (o *OrderEntity) Items() []*OrderItemEntity {
 	return o.items
 }
 
+func (o *OrderEntity) SetTotalPrice(totalPrice float64) {
+	o.totalPrice = totalPrice
+}
+
 func (o *OrderEntity) TotalPrice() float64 {
 	return o.totalPrice
+}
+
+func (o *OrderEntity) SetPaidValue(paidValue float64) {
+	o.paidValue = paidValue
 }
 
 func (o *OrderEntity) PaidValue() float64 {

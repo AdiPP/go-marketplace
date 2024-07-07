@@ -3,8 +3,9 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/AdiPP/go-marketplace/pkg/usecase"
 	"net/http"
+
+	"github.com/AdiPP/go-marketplace/pkg/usecase"
 )
 
 type CreateOrderHandler struct {
@@ -35,6 +36,5 @@ func (h *CreateOrderHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(fmt.Sprintf("order created: %s", order.Id())))
-	return
+	w.Write([]byte(fmt.Sprintf("order created: %v", order.Id())))
 }

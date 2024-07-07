@@ -1,7 +1,7 @@
 package usecase
 
 type Order struct {
-	Id         string
+	Id         int64
 	Items      []OrderItem
 	TotalPrice float64
 	Status     string
@@ -9,7 +9,7 @@ type Order struct {
 
 type OrderItem struct {
 	ProductName string
-	Quantity    int
+	Quantity    int64
 	TotalPrice  float64
 }
 

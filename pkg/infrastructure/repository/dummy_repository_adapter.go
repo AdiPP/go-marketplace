@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+
 	"github.com/AdiPP/go-marketplace/pkg/domain/entity"
 	"github.com/google/uuid"
 )
@@ -9,12 +10,12 @@ import (
 type DummyRepositoryAdapter struct {
 }
 
-func (d *DummyRepositoryAdapter) Save(order *entity.OrderEntity) (*entity.OrderEntity, error) {
-	return order, nil
-}
-
 func NewDummyRepositoryAdapter() *DummyRepositoryAdapter {
 	return &DummyRepositoryAdapter{}
+}
+
+func (d *DummyRepositoryAdapter) Save(order *entity.OrderEntity) (*entity.OrderEntity, error) {
+	return order, nil
 }
 
 func (d *DummyRepositoryAdapter) FindById(id string) (result *entity.ProductEntity, err error) {

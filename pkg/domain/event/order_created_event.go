@@ -1,7 +1,7 @@
 package event
 
 type OrderCreatedEvent struct {
-	Id         string
+	Id         int64
 	Items      []OrderItem
 	TotalPrice float64
 	Status     string
@@ -13,6 +13,6 @@ func (o OrderCreatedEvent) GetType() string {
 
 type OrderItem struct {
 	ProductName string
-	Quantity    int
+	Quantity    int64
 	TotalPrice  float64
 }
