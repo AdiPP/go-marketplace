@@ -6,5 +6,5 @@ type CreateOrderDto struct {
 
 type Item struct {
 	ProductId string `json:"product_id"`
-	Qtd       int    `json:"qtd"`
+	Qtd       int64  `json:"qtd"`
 }

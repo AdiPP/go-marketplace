@@ -3,7 +3,7 @@ package event
 import "time"
 
 type OrderPaidEvent struct {
-	OrderId     string
+	OrderId     int64
 	PaidValue   float64
 	PaymentDate time.Time
 }

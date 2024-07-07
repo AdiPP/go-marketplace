@@ -2,10 +2,11 @@ package usecase
 
 import (
 	"context"
+	"time"
+
 	"github.com/AdiPP/go-marketplace/pkg/domain/entity"
 	"github.com/AdiPP/go-marketplace/pkg/domain/event"
 	"github.com/AdiPP/go-marketplace/pkg/domain/queue"
-	"time"
 )
 
 type ProcessOrderPaymentUseCase struct {
