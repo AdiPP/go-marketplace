@@ -3,6 +3,7 @@ package queue
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"time"
 
@@ -12,16 +13,63 @@ import (
 )
 
 type RabbitMQAdapter struct {
+	username  string
+	password  string
+	host      string
+	port      string
 	uri       string
 	conn      *amqp.Connection
 	listeners map[string][]queue.Listener
 }
 
-func NewRabbitMQAdapter(uri string) *RabbitMQAdapter {
-	return &RabbitMQAdapter{
-		uri:       uri,
-		listeners: make(map[string][]queue.Listener),
+type RabbitMQAdapterOption func(*RabbitMQAdapter)
+
+func RabbitMQAdapterWithUsername(username string) RabbitMQAdapterOption {
+	return func(a *RabbitMQAdapter) {
+		a.username = username
 	}
+}
+
+func RabbitMQAdapterWithPassword(password string) RabbitMQAdapterOption {
+	return func(a *RabbitMQAdapter) {
+		a.password = password
+	}
+}
+
+func RabbitMQAdapterWithHost(host string) RabbitMQAdapterOption {
+	return func(a *RabbitMQAdapter) {
+		a.host = host
+	}
+}
+
+func RabbitMQAdapterWithPort(port string) RabbitMQAdapterOption {
+	return func(a *RabbitMQAdapter) {
+		a.port = port
+	}
+}
+
+func NewRabbitMQAdapter(opts ...RabbitMQAdapterOption) *RabbitMQAdapter {
+	adapter := &RabbitMQAdapter{
+		username:  "guest",
+		password:  "guest",
+		host:      "localhost",
+		port:      "5672",
+		uri:       "",
+		conn:      &amqp.Connection{},
+		listeners: map[string][]queue.Listener{},
+	}
+
+	for _, opt := range opts {
+		opt(adapter)
+	}
+
+	adapter.buildUri()
+
+	return adapter
+}
+
+func (r *RabbitMQAdapter) buildUri() {
+	r.uri = fmt.Sprintf("amqp://%s:%s@%s:%s/", r.username, r.password, r.host, r.port)
 }
 
 func (r *RabbitMQAdapter) Publish(ctx context.Context, event event.Event) error {

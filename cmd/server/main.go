@@ -39,7 +39,12 @@ func main() {
 	dummyRepo := repository.NewDummyRepositoryAdapter()
 
 	// Queue Adapter
-	q := infraQueue.NewRabbitMQAdapter("amqp://guest:guest@localhost:5672/")
+	q := infraQueue.NewRabbitMQAdapter(
+		infraQueue.RabbitMQAdapterWithUsername("guest"),
+		infraQueue.RabbitMQAdapterWithPassword("guest"),
+		infraQueue.RabbitMQAdapterWithHost("localhost"),
+		infraQueue.RabbitMQAdapterWithPort("5672"),
+	)
 
 	// Use Cases
 	createOrderUseCase := usecase.NewCreateOrderUseCase(q, dummyRepo, postgresRepo)
